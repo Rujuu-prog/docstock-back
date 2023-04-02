@@ -1,0 +1,31 @@
+# version指定
+version: '3.7'
+services:
+  docstock-back:
+    # 作成するコンテナ名指定
+    container_name: 'docstock-back'
+    # Dockerfileが置いてある場所を相対パスで指定
+    build: .
+    # コンテナ内のワーキングディレクトリを指定
+    working_dir: '/home/app/'
+    # コンテナを持続させる設定
+    tty: true
+    # ローカルとコンテナ内で、共有するフォルダーを指定
+    volumes:
+      - ./app:/home/app/
+    # ポートを指定
+    ports:
+      - '8000:8000'
+  
+  docstock-db:
+    image: postgres:15
+    ports:
+      - 5432:5432
+    volumes:
+      - db-store:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+volumes:
+  db-store:
