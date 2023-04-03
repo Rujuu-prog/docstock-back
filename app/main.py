@@ -1,21 +1,14 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
+
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
-from .utils import is_valid_email
+from .utils import is_valid_email, hash_password
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-async def hash_password(password: str):
-    return pwd_context.hash(password)
-
 
 async def get_db():
     db = SessionLocal()

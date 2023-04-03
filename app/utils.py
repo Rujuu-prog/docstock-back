@@ -1,4 +1,6 @@
 from email_validator import validate_email, EmailNotValidError
+from passlib.context import CryptContext
+
 
 def is_valid_email(email: str) -> bool:
     try:
@@ -6,3 +8,9 @@ def is_valid_email(email: str) -> bool:
         return True
     except EmailNotValidError:
         return False
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(password: str):
+    return pwd_context.hash(password)
