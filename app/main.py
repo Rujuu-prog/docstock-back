@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
+from .utils import is_valid_email
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -25,6 +26,8 @@ def get_db():
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    if not is_valid_email(user.email):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email format")
     # Check if a user with the same name or email already exists
     db_user = crud.get_user_by_name_or_email(db, name=user.name, email=user.email)
     if db_user:
