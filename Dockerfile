@@ -3,7 +3,7 @@ FROM python:3
 
 # Linuxに必要なソフトインストール
 RUN apt-get update
-RUN apt-get -y install locales && localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+RUN apt-get -y install tree locales && localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
 
 # 日本語対応、日本のタイムゾーンへ変更
 ENV LANG ja_JP.UTF-8
