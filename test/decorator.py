@@ -15,7 +15,7 @@ def temp_db(f):
         # fixtureから受け取るSessionLocalを使うようにget_dbを強制的に変更
         app.dependency_overrides[get_db] = override_get_db
         # Run tests
-        f(*args, **kwargs)
+        f(SessionLocal, *args, **kwargs)
         # get_dbを元に戻す
         app.dependency_overrides[get_db] = get_db
     return func
