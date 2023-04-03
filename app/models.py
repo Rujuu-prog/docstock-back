@@ -15,8 +15,9 @@ class User(Base):
     email = Column(String(100), unique=True)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
 
-    groups = relationship("Group", secondary="user_group_roles", backref="users")
-    roles = relationship("Role", secondary="user_group_roles", backref="users")
+    join_groups = relationship("Group", secondary="user_group_roles", back_populates="join_users", overlaps="user_roles,group_roles,role_users,role_groups")
+    user_roles = relationship("Role", secondary="user_group_roles", back_populates="role_users", overlaps="join_groups,role_groups,group_roles,join_users")
+    have_documents = relationship("Document", back_populates="owner_user")
 
 
 class Group(Base):
@@ -26,8 +27,10 @@ class Group(Base):
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
 
-    users = relationship("User", secondary="user_group_roles", backref="groups")
-    roles = relationship("Role", secondary="user_group_roles", backref="groups")
+    join_users = relationship("User", secondary="user_group_roles", back_populates="join_groups", overlaps="group_roles,role_users,role_groups,user_roles")
+    group_roles = relationship("Role", secondary="user_group_roles", back_populates="role_groups", overlaps="join_users,role_users,user_roles,join_groups")
+    inside_documents = relationship("Document", back_populates="owner_group")
+
 
 
 class Role(Base):
@@ -35,8 +38,9 @@ class Role(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100))
 
-    users = relationship("User", secondary="user_group_roles", backref="roles")
-    groups = relationship("Group", secondary="user_group_roles", backref="roles")
+    role_users = relationship("User", secondary="user_group_roles", back_populates="user_roles", overlaps="role_groups,join_users,group_roles,join_groups")
+    role_groups = relationship("Group", secondary="user_group_roles", back_populates="group_roles", overlaps="role_users,join_users,user_roles,join_groups")
+
 
 
 class UserGroupRole(Base):
@@ -56,12 +60,13 @@ class Document(Base):
     created_at = Column(DateTime, default=datetime.now(), nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    owner = relationship("User", back_populates="documents")
+    owner_user = relationship("User", back_populates="have_documents")
 
     group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
-    groups = relationship("Group", back_populates="documents")
+    owner_group = relationship("Group", back_populates="inside_documents")
 
     tags = relationship("Tag", secondary="document_tags", back_populates="documents")
+
 
 
 class Tag(Base):
