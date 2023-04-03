@@ -25,6 +25,11 @@ def get_db():
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    # Check if a user with the same name or email already exists
+    db_user = crud.get_user_by_name_or_email(db, name=user.name, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User with the same name or email already exists")
+    
     hashed_password = hash_password(user.password)
     db_user = models.User(name=user.name, password=hashed_password, email=user.email)
     db.add(db_user)

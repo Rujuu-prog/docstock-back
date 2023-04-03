@@ -5,6 +5,10 @@ from . import models, schemas
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
+def get_user_by_name_or_email(db: Session, name: str, email: str):
+    return db.query(models.User).filter((models.User.name == name) | (models.User.email == email)).first()
+
+
 def create_user(db: Session, user: schemas.UserCreate):
     db_user = models.User(name=user.name, password=user.password, email=user.email)
     db.add(db_user)
