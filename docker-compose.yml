@@ -13,6 +13,7 @@ services:
     # ローカルとコンテナ内で、共有するフォルダーを指定
     volumes:
       - ./app:/home/app/
+      - ./db:/home/db/
     # ポートを指定
     ports:
       - '8000:8000'
