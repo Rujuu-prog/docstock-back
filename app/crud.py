@@ -50,12 +50,6 @@ def create_group(db: Session, group: schemas.GroupCreate) -> models.Group:
 def get_role(db: Session, role_id: int):
     return db.query(models.Role).filter(models.Role.id == role_id).first()
 
-def create_role(db: Session, role: schemas.RoleCreate):
-    db_role = models.Role(name=role.name)
-    db.add(db_role)
-    db.commit()
-    db.refresh(db_role)
-    return db_role
 
 def get_document(db: Session, document_id: int):
     return db.query(models.Document).filter(models.Document.id == document_id).first()
