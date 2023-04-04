@@ -65,6 +65,12 @@ async def get_role(role_id: int, db: Session = Depends(get_db)):
 
 @app.post("/documents/", response_model=schemas.Document)
 async def create_document(document: schemas.DocumentCreate, owner_id: int, group_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db=db, user_id=owner_id)
+    if db_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    db_group = crud.get_group(db=db, group_id=group_id)
+    if db_group is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
     return crud.create_document(db=db, document=document, owner_id=owner_id, group_id=group_id)
 
 @app.get("/documents/{document_id}", response_model=schemas.Document)
