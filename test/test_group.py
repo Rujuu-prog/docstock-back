@@ -2,19 +2,22 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from . import decorator
-from .utils import check_created_at_field_helper, create_group_helper
+from .utils import check_created_at_field_helper, create_user_helper ,create_group_helper
 
 client = TestClient(app)
 
 
 @decorator.temp_db
 def test_create_group(SessionLocal):
+    # Create test user using the helper function
+    test_user = create_user_helper(SessionLocal)
+
     response = client.post(
         "/groups/",
         json={
             "name": "test",
             "description": "hogehogehogege",
-            "creator_id": 1,
+            "creator_id": test_user.id,
         },)
     assert response.status_code == 200, f"Expected status code 200, but got {response.status_code}. Error details: {response.text}"
     data = response.json()
