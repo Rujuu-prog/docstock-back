@@ -1,7 +1,8 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app import crud, schemas
+from app.crud import create_user
+from app.schemas import UserCreate
 from . import decorator
 from .utils import check_created_at_field_helper
 
@@ -27,8 +28,8 @@ def test_create_user(SessionLocal):
 
 def create_user_helper(SessionLocal):
     db = SessionLocal()
-    user_in = schemas.UserCreate(name="test", email="test@gmail.com", password="test")
-    return crud.create_user(db, user_in)
+    user_in = UserCreate(name="test", email="test@gmail.com", password="test")
+    return create_user(db, user_in)
 
 @decorator.temp_db
 def test_get_user(SessionLocal):
