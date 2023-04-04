@@ -19,12 +19,18 @@ def create_user(db: Session, user: schemas.UserCreate):
 def get_group(db: Session, group_id: int):
     return db.query(models.Group).filter(models.Group.id == group_id).first()
 
-def create_group(db: Session, group: schemas.GroupCreate):
+def create_user_group_role(db: Session, user_id: int, group_id: int, role_id: int) -> models.UserGroupRole:
+    """Create a new UserGroupRole."""
+    user_group_role = models.UserGroupRole(user_id=user_id, group_id=group_id, role_id=role_id)
+    db.add(user_group_role)
+    db.commit()
+    db.refresh(user_group_role)
+    return user_group_role
+
+def create_group(db: Session, group: schemas.GroupCreate) -> models.Group:
+    """Create a new group."""
     db_group = models.Group(name=group.name, description=group.description)
     db.add(db_group)
-    # FIXME: roleは別で定義するようにする？
-    db_user_group_role = models.UserGroupRole(user_id=group.creator_id, group_id=db_group.id)
-    db.add(db_user_group_role)
     db.commit()
     db.refresh(db_group)
     return db_group
