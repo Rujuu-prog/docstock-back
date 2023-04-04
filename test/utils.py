@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from app.crud import create_user, create_group, create_role
-from app.schemas import UserCreate, GroupCreate, RoleCreate
+from app.crud import create_user, create_group, create_role, create_document
+from app.schemas import UserCreate, GroupCreate, RoleCreate, DocumentCreate
 
 def check_created_at_field_helper(data):
     """ Helper function to check if the 'created_at' field is present and has a valid date-time format """
@@ -42,3 +42,10 @@ def create_role_helper(SessionLocal):
     db = SessionLocal()
     role_in = RoleCreate(name="test")
     return create_role(db, role_in)
+
+
+def create_document_helper(SessionLocal, owner_id, group_id):
+    """ Helper function to create a document """
+    db = SessionLocal()
+    document_in = DocumentCreate(title="test", content="#aaa")
+    return create_document(db, document_in, owner_id, group_id)
