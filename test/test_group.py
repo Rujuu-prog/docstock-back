@@ -1,0 +1,48 @@
+from fastapi.testclient import TestClient
+
+from app.main import app
+from app.crud import create_group
+from app.schemas import GroupCreate
+from . import decorator
+from .utils import check_created_at_field_helper
+
+client = TestClient(app)
+
+
+@decorator.temp_db
+def test_create_group(SessionLocal):
+    response = client.post(
+        "/groups/",
+        json={
+            "name": "test",
+            "description": "hogehogehogege",
+            "creator_id": 1,
+        },)
+    assert response.status_code == 200, f"Expected status code 200, but got {response.status_code}. Error details: {response.text}"
+    data = response.json()
+    assert data["id"] == 1
+    assert data["name"] == "test"
+    assert data["description"] == "hogehogehogege"
+    check_created_at_field_helper(data)
+
+
+def create_group_helper(SessionLocal):
+    db = SessionLocal()
+    group_in = GroupCreate(name="test", description="hogehogehogege", creator_id=1)
+    return create_group(db, group_in)
+
+@decorator.temp_db
+def test_get_user(SessionLocal):
+    # Create test group using the helper function
+    test_group = create_group_helper(SessionLocal)
+
+    # Test the GET endpoint
+    response = client.get(f"/groups/{test_group.id}")
+
+    # Verify the response status code and data
+    assert response.status_code == 200, f"Expected status code 200, but got {response.status_code}. Error details: {response.text}"
+    data = response.json()
+    assert data["id"] == test_group.id
+    assert data["name"] == "test"
+    assert data["description"] == "hogehogehogege"
+    check_created_at_field_helper(data)

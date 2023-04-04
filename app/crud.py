@@ -22,6 +22,7 @@ def get_group(db: Session, group_id: int):
 def create_group(db: Session, group: schemas.GroupCreate):
     db_group = models.Group(name=group.name, description=group.description)
     db.add(db_group)
+    # FIXME: roleは別で定義するようにする？
     db_user_group_role = models.UserGroupRole(user_id=group.creator_id, group_id=db_group.id)
     db.add(db_user_group_role)
     db.commit()
