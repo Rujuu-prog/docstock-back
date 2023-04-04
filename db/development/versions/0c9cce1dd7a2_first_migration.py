@@ -7,6 +7,7 @@ Create Date: 2023-04-03 16:21:23.292288
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.sql import table, column
 
 
 # revision identifiers, used by Alembic.
@@ -84,6 +85,18 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_document_tags_id'), 'document_tags', ['id'], unique=False)
+    # Add default roles
+    role_table = table('roles',
+        column('id', sa.Integer),
+        column('name', sa.String)
+    )
+
+    op.bulk_insert(role_table,
+    [
+        {'id': 1, 'name': 'admin'},
+        {'id': 2, 'name': 'editor'},
+        {'id': 3, 'name': 'viewer'}
+    ])
     # ### end Alembic commands ###
 
 
