@@ -28,7 +28,7 @@ def test_create_group(SessionLocal):
 
 
 @decorator.temp_db
-def test_get_user(SessionLocal):
+def test_get_group(SessionLocal):
     # Create test group using the helper function
     test_group = create_group_helper(SessionLocal)
 
