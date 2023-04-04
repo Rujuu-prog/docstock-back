@@ -56,10 +56,6 @@ async def get_group(group_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
     return db_group
 
-@app.post("/roles/", response_model=schemas.Role)
-async def create_role(role: schemas.RoleCreate, db: Session = Depends(get_db)):
-    return crud.create_role(db=db, role=role)
-
 @app.get("/roles/{role_id}", response_model=schemas.Role)
 async def get_role(role_id: int, db: Session = Depends(get_db)):
     db_role = crud.get_role(db=db, role_id=role_id)
