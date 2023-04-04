@@ -43,6 +43,10 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/groups/", response_model=schemas.Group)
 async def create_group(group: schemas.GroupCreate, db: Session = Depends(get_db)):
+    # Check if creator_id exists
+    db_user = crud.get_user(db=db, user_id=group.creator_id)
+    if db_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return crud.create_group(db=db, group=group)
 
 @app.get("/groups/{group_id}", response_model=schemas.Group)
