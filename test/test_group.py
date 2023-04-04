@@ -1,10 +1,8 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.crud import create_group
-from app.schemas import GroupCreate
 from . import decorator
-from .utils import check_created_at_field_helper
+from .utils import check_created_at_field_helper, create_group_helper
 
 client = TestClient(app)
 
@@ -25,11 +23,6 @@ def test_create_group(SessionLocal):
     assert data["description"] == "hogehogehogege"
     check_created_at_field_helper(data)
 
-
-def create_group_helper(SessionLocal):
-    db = SessionLocal()
-    group_in = GroupCreate(name="test", description="hogehogehogege", creator_id=1)
-    return create_group(db, group_in)
 
 @decorator.temp_db
 def test_get_user(SessionLocal):
